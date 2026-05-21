@@ -3,15 +3,16 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { pakets_jenis, pakets_kategori } from "@/generated/prisma/enums";
 
 export async function createPaket(formData: FormData) {
-  const nama_paket = formData.get("nama_paket") as string;
-  const jenis = formData.get("jenis") as any;
-  const kategori = formData.get("kategori") as any;
-  const jumlah_pax = parseInt(formData.get("jumlah_pax") as string) || 0;
-  const harga_paket = parseInt(formData.get("harga_paket") as string) || 0;
-  const deskripsi = formData.get("deskripsi") as string;
-  const foto1 = (formData.get("foto1") as string) || null;
+  const nama_paket = String(formData.get("nama_paket") ?? "");
+  const jenis = String(formData.get("jenis") ?? "") as pakets_jenis;
+  const kategori = String(formData.get("kategori") ?? "") as pakets_kategori;
+  const jumlah_pax = parseInt(String(formData.get("jumlah_pax") ?? "0")) || 0;
+  const harga_paket = parseInt(String(formData.get("harga_paket") ?? "0")) || 0;
+  const deskripsi = String(formData.get("deskripsi") ?? "");
+  const foto1 = String(formData.get("foto1") ?? "") || null;
 
   await prisma.pakets.create({
     data: {
@@ -32,13 +33,13 @@ export async function createPaket(formData: FormData) {
 }
 
 export async function updatePaket(id: string, formData: FormData) {
-  const nama_paket = formData.get("nama_paket") as string;
-  const jenis = formData.get("jenis") as any;
-  const kategori = formData.get("kategori") as any;
-  const jumlah_pax = parseInt(formData.get("jumlah_pax") as string) || 0;
-  const harga_paket = parseInt(formData.get("harga_paket") as string) || 0;
-  const deskripsi = formData.get("deskripsi") as string;
-  const foto1 = (formData.get("foto1") as string) || null;
+  const nama_paket = String(formData.get("nama_paket") ?? "");
+  const jenis = String(formData.get("jenis") ?? "") as pakets_jenis;
+  const kategori = String(formData.get("kategori") ?? "") as pakets_kategori;
+  const jumlah_pax = parseInt(String(formData.get("jumlah_pax") ?? "0")) || 0;
+  const harga_paket = parseInt(String(formData.get("harga_paket") ?? "0")) || 0;
+  const deskripsi = String(formData.get("deskripsi") ?? "");
+  const foto1 = String(formData.get("foto1") ?? "") || null;
 
   await prisma.pakets.update({
     where: { id: BigInt(id) },

@@ -7,8 +7,7 @@ import {
   ShoppingCart, 
   Truck,
   LogOut,
-  Package,
-  ChevronLeft
+  Package
 } from "lucide-react";
 import { logout } from "../login/actions";
 
@@ -29,7 +28,7 @@ export default function OwnerSidebar() {
             <Package className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">Owner</h2>
+            <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">EMBEGE</h2>
             <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Business Owner</p>
           </div>
         </div>
@@ -56,17 +55,16 @@ export default function OwnerSidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto p-8 border-t border-slate-100 bg-slate-50/50">
-        <button 
-          onClick={() => logout()}
-          className="w-full flex items-center justify-between gap-4 px-4 py-4 rounded-2xl text-sm font-black text-rose-500 bg-rose-50 hover:bg-rose-100 transition-all-custom group"
-        >
-          <div className="flex items-center gap-3">
+      <div className="mt-auto p-8 bg-white">
+        <form action={logout}>
+          <button 
+            type="submit"
+            className="flex items-center gap-3 text-slate-400 hover:text-rose-500 font-bold text-sm transition-colors group"
+          >
             <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            Sign Out
-          </div>
-          <ChevronLeft className="w-4 h-4 opacity-50" />
-        </button>
+            Logout
+          </button>
+        </form>
       </div>
     </aside>
   );

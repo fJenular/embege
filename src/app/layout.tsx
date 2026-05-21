@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import TopNav from "./TopNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Savoria POS",
-  description: "Catering App POS",
+  title: "EMBEGE - Eat More. Be Good Everyday",
+  description: "Platform pemesanan katering - Good food. Good mood",
 };
 
 export default function RootLayout({
@@ -25,12 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="id"
+      className={`${geistSans.variable} ${geistMono.variable} min-h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f4f8fc] text-blue-950 font-sans overflow-hidden">
-        <TopNav />
-        {children}
+      <body className="min-h-screen flex bg-[#f4f8fc] text-slate-900 font-sans">
+        <main className="flex-1 flex flex-col overflow-auto">
+          {children}
+        </main>
       </body>
     </html>
   );

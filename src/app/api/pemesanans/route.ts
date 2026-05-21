@@ -1,6 +1,18 @@
 import prisma from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 
+type PemesananItem = {
+  id_paket: string
+  subtotal: number | string
+}
+
+type PemesananRequest = {
+  id_pelanggan: string
+  id_jenis_bayar?: string
+  total_bayar?: number | string
+  items?: PemesananItem[]
+}
+
 // Helper: serialize BigInt fields to string for JSON responses
 function serializeBigInt(data: unknown): unknown {
   return JSON.parse(
@@ -39,7 +51,7 @@ export async function GET() {
 // ======================
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const body = (await req.json()) as PemesananRequest
     const { id_pelanggan } = body
 
     if (!id_pelanggan) {
@@ -71,7 +83,7 @@ export async function POST(req: Request) {
         } : {}),
         ...(body.items && body.items.length > 0 ? {
           detail_pemesanans: {
-            create: body.items.map((item: any) => ({
+            create: body.items.map((item) => ({
               id_paket: BigInt(item.id_paket),
               subtotal: BigInt(item.subtotal || 0)
             }))

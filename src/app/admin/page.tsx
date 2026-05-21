@@ -37,7 +37,8 @@ export default async function AdminDashboardPage() {
   });
 
   return (
-    <div className="space-y-10 p-2">
+    <div className="flex-1 overflow-y-auto">
+    <div className="space-y-10 p-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-[0.2em] mb-2">
@@ -172,6 +173,7 @@ export default async function AdminDashboardPage() {
           <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform" />
         </div>
       </div>
+    </div>
     </div>
   );
 }

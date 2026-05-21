@@ -5,9 +5,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { Utensils, LayoutGrid, ListOrdered, Clock, Receipt, Bell, Search, Minus, Plus, ChevronRight } from "lucide-react";
 
-export default function HomeClient({ pakets, recentOrders = [], jenisPembayarans = [] }: { pakets: any[], recentOrders?: any[], jenisPembayarans?: any[] }) {
+type Paket = {
+  id: string;
+  nama_paket: string;
+  kategori?: string | null;
+  jenis?: string | null;
+  harga_paket: number;
+  deskripsi?: string | null;
+  foto1?: string | null;
+  jumlah_pax?: number | null;
+};
+
+type RecentOrder = {
+  id: string;
+  pelanggans?: {
+    nama_pelanggan?: string | null;
+    alamat?: string | null;
+  };
+  detail_pemesanans?: unknown[];
+  status_pesan?: string | null;
+};
+
+type JenisPembayaran = {
+  id: string;
+  metode_pembayaran?: string;
+};
+
+type CartItem = {
+  paket: Paket;
+  quantity: number;
+};
+
+export default function HomeClient({ pakets, recentOrders = [], jenisPembayarans = [] }: { pakets: Paket[]; recentOrders?: RecentOrder[]; jenisPembayarans?: JenisPembayaran[] }) {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [cart, setCart] = useState<{ paket: any; quantity: number }[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [customerInfo, setCustomerInfo] = useState({ nama: "", telepon: "", id_jenis_bayar: "" });
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +48,7 @@ export default function HomeClient({ pakets, recentOrders = [], jenisPembayarans
     ? pakets 
     : pakets.filter(p => p.kategori === activeCategory);
 
-  const addToCart = (paket: any) => {
+  const addToCart = (paket: Paket) => {
     setCart(prev => {
       const existing = prev.find(item => item.paket.id === paket.id);
       if (existing) {
@@ -81,15 +112,16 @@ export default function HomeClient({ pakets, recentOrders = [], jenisPembayarans
       alert("Transaksi Berhasil!");
       setCart([]);
       setCustomerInfo({ nama: "", telepon: "", id_jenis_bayar: "" });
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Terjadi kesalahan saat memproses transaksi.";
+      alert("Error: " + message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="flex-1 flex overflow-hidden">
+    <main className="flex-1 flex overflow-auto">
       {/* Left Column */}
       <div className="flex-1 flex flex-col overflow-y-auto px-8 py-6 pb-20">
         
@@ -266,7 +298,7 @@ export default function HomeClient({ pakets, recentOrders = [], jenisPembayarans
                 <div key={idx} className="flex gap-4">
                   <div className="w-16 h-16 bg-slate-100 rounded-2xl overflow-hidden shrink-0 shadow-sm border border-slate-100">
                     {item.paket.foto1 ? (
-                      <img src={`/storage/${item.paket.foto1}`} className="w-full h-full object-cover" />
+                      <img src={`/storage/${item.paket.foto1}`} alt={item.paket.nama_paket ?? "Paket image"} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Utensils className="w-5 h-5 text-blue-200" />

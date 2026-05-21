@@ -3,14 +3,20 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { users_level } from "@/generated/prisma/enums";
 
 export async function createUser(formData: FormData) {
+  const name = String(formData.get("name") ?? "");
+  const email = String(formData.get("email") ?? "");
+  const password = String(formData.get("password") ?? "");
+  const level = String(formData.get("level") ?? "") as users_level;
+
   await prisma.users.create({
     data: {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-      level: formData.get("level") as any,
+      name,
+      email,
+      password,
+      level,
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -20,14 +26,23 @@ export async function createUser(formData: FormData) {
 }
 
 export async function updateUser(id: string, formData: FormData) {
-  const data: any = {
-    name: formData.get("name") as string,
-    email: formData.get("email") as string,
-    level: formData.get("level") as any,
+  const name = String(formData.get("name") ?? "");
+  const email = String(formData.get("email") ?? "");
+  const level = String(formData.get("level") ?? "") as users_level;
+  const password = String(formData.get("password") ?? "");
+
+  const data: {
+    name: string;
+    email: string;
+    level: users_level;
+    updated_at: Date;
+    password?: string;
+  } = {
+    name,
+    email,
+    level,
     updated_at: new Date(),
   };
-  // Only update password if provided
-  const password = formData.get("password") as string;
   if (password) data.password = password;
 
   await prisma.users.update({

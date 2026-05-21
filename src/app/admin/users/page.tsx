@@ -1,11 +1,11 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Edit, UserCheck, Shield, Truck, Crown } from "lucide-react";
+import { Plus, Edit, UserCheck, Shield, Truck, Crown, type LucideIcon } from "lucide-react";
 import DeleteUserButton from "./DeleteButton";
 
 export const dynamic = "force-dynamic";
 
-const levelIcons: Record<string, { icon: any; color: string; bg: string }> = {
+const levelIcons: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
   admin: { icon: Shield, color: "text-red-600", bg: "bg-red-50" },
   owner: { icon: Crown, color: "text-amber-600", bg: "bg-amber-50" },
   kurir: { icon: Truck, color: "text-blue-600", bg: "bg-blue-50" },

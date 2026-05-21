@@ -34,12 +34,13 @@ export default function LoginPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500 shadow-lg shadow-emerald-500/30 mb-6 group transition-all-custom hover:scale-110">
               <img 
                 src="/catering_app_logo_1778480833493.png" 
-                alt="Savoria Logo" 
+                alt="EMBEGE Logo" 
                 className="w-14 h-14 object-contain brightness-0 invert"
               />
             </div>
-            <h1 className="text-4xl font-black text-white tracking-tight">Welcome Back</h1>
-            <p className="text-emerald-100/60 mt-2 font-medium">Please enter your details to sign in</p>
+            <h1 className="text-4xl font-black text-white tracking-tight">EMBEGE</h1>
+            <p className="text-emerald-100/60 mt-2 font-medium text-sm">Eat More. Be Good Everyday.</p>
+            <p className="text-emerald-100/60 font-medium text-sm italic">&quot;Good food. Good mood.&quot;</p>
           </div>
 
           <form action={handleSubmit} className="space-y-5">
@@ -99,7 +100,7 @@ export default function LoginPage() {
 
           <div className="mt-10 pt-8 border-t border-white/10 text-center">
             <p className="text-emerald-100/40 text-sm font-medium">
-              Admin: admin@savoria.com / admin123
+              Admin: admin@embege.com / admin123
             </p>
           </div>
         </div>

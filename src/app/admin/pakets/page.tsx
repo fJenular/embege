@@ -117,7 +117,7 @@ export default async function PaketsPage() {
                         <Package className="w-10 h-10 text-slate-300" />
                       </div>
                       <p className="font-black text-slate-900 text-xl tracking-tight">Catalog Empty</p>
-                      <p className="text-slate-400 text-sm mt-2 font-medium">You haven't added any packages yet. Start by creating your first menu.</p>
+                      <p className="text-slate-400 text-sm mt-2 font-medium">You haven&apos;t added any packages yet. Start by creating your first menu.</p>
                       <Link 
                         href="/admin/pakets/create" 
                         className="inline-flex items-center gap-2 text-emerald-600 font-black text-sm mt-6 hover:gap-4 transition-all"
