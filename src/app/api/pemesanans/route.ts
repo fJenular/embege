@@ -62,6 +62,11 @@ export async function POST(req: Request) {
     }
 
     const no_resi = `INV-${Date.now()}`
+    const totalBayar = BigInt(Math.round(Number(body.total_bayar || 0)))
+    const paymentMethodId = body.id_jenis_bayar ? BigInt(body.id_jenis_bayar) : null
+    const paymentMethodExists = paymentMethodId
+      ? await prisma.jenis_pembayarans.findUnique({ where: { id: paymentMethodId } })
+      : null
 
     const pemesanan = await prisma.pemesanans.create({
       data: {
@@ -72,12 +77,12 @@ export async function POST(req: Request) {
         },
         no_resi: no_resi,
         tgl_pesan: new Date(),
-        total_bayar: BigInt(body.total_bayar || 0),
+        total_bayar: totalBayar,
         status_pesan: 'Menunggu_Konfirmasi',
-        ...(body.id_jenis_bayar ? {
+        ...(paymentMethodExists ? {
           jenis_pembayarans: {
             connect: {
-              id: BigInt(body.id_jenis_bayar)
+              id: paymentMethodId!
             }
           }
         } : {}),
@@ -85,7 +90,7 @@ export async function POST(req: Request) {
           detail_pemesanans: {
             create: body.items.map((item) => ({
               id_paket: BigInt(item.id_paket),
-              subtotal: BigInt(item.subtotal || 0)
+              subtotal: BigInt(Math.round(Number(item.subtotal || 0)))
             }))
           }
         } : {})

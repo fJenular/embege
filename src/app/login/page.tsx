@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { login } from "./actions";
 import { Lock, Mail, ChevronRight, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -19,95 +21,92 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-900">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-40 scale-105"
-        style={{ backgroundImage: "url('/login_background_1778480858792.png')" }}
-      />
-      <div className="absolute inset-0 z-10 bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-emerald-900/40" />
-
-      {/* Login Card */}
-      <div className="relative z-20 w-full max-w-md px-6">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2.5rem] shadow-2xl p-10 overflow-hidden">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500 shadow-lg shadow-emerald-500/30 mb-6 group transition-all-custom hover:scale-110">
-              <img 
-                src="/catering_app_logo_1778480833493.png" 
-                alt="EMBEGE Logo" 
-                className="w-14 h-14 object-contain brightness-0 invert"
-              />
+    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4 py-10 animate-fade-in">
+      <div className="w-full max-w-xl">
+        <div className="bg-white border border-slate-200 rounded-[2rem] shadow-2xl overflow-hidden animate-appear">
+          <div className="bg-[var(--primary-soft)] px-10 py-10 text-center animate-slide-up">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-[1.75rem] bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)/20] mx-auto mb-6 animate-pop">
+              <span className="text-3xl font-black">E</span>
             </div>
-            <h1 className="text-4xl font-black text-white tracking-tight">EMBEGE</h1>
-            <p className="text-emerald-100/60 mt-2 font-medium text-sm">Eat More. Be Good Everyday.</p>
-            <p className="text-emerald-100/60 font-medium text-sm italic">&quot;Good food. Good mood.&quot;</p>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">EMBEGE</h1>
+            <p className="mt-3 text-sm text-slate-500 font-medium">Eat More. Be Good Everyday.</p>
+            <p className="mt-2 text-sm text-slate-400 italic">Good food. Good mood.</p>
           </div>
 
-          <form action={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="bg-rose-500/20 border border-rose-500/50 text-rose-200 px-4 py-3 rounded-2xl flex items-center gap-3 animate-shake">
-                <AlertCircle className="w-5 h-5 shrink-0" />
-                <span className="text-sm font-semibold">{error}</span>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-emerald-100/70 uppercase tracking-widest ml-1">Email Address</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-100/30 group-focus-within:text-emerald-400 transition-colors" />
-                <input 
-                  name="email"
-                  type="email" 
-                  required
-                  placeholder="name@example.com"
-                  className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center px-1">
-                <label className="text-xs font-bold text-emerald-100/70 uppercase tracking-widest">Password</label>
-                <a href="#" className="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors">Forgot?</a>
-              </div>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-100/30 group-focus-within:text-emerald-400 transition-colors" />
-                <input 
-                  name="password"
-                  type="password" 
-                  required
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit"
-              disabled={loading}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white font-black py-4 rounded-2xl shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 group transition-all-custom active:scale-[0.98] mt-4"
+          <div className="px-10 py-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <button
+              type="button"
+              onClick={() => router.push('/')}
+              className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
             >
-              {loading ? (
-                <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  Sign In
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
+              ← Kembali ke Beranda
             </button>
-          </form>
+            <div className="mb-8 text-center">
+              <p className="text-sm uppercase tracking-[0.2em] text-slate-500 font-bold">Login Karyawan</p>
+              <h2 className="mt-3 text-2xl font-black text-slate-900">Masuk untuk melanjutkan</h2>
+            </div>
 
-          <div className="mt-10 pt-8 border-t border-white/10 text-center">
-            <p className="text-emerald-100/40 text-sm font-medium">
-              Admin: admin@embege.com / admin123
-            </p>
+            <form action={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="bg-rose-500/10 border border-rose-500/30 text-rose-600 px-4 py-3 rounded-2xl flex items-center gap-3 animate-shake">
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                  <span className="text-sm font-semibold">{error}</span>
+                </div>
+              )}
+
+              <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.15s' }}>
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="name@example.com"
+                    className="w-full pl-14 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Password</label>
+                  <a href="#" className="text-xs font-bold text-[var(--primary)] hover:text-slate-900 transition-colors">Lupa password?</a>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input
+                    name="password"
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    className="w-full pl-14 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] disabled:opacity-50 text-white font-black py-4 rounded-2xl shadow-lg shadow-[var(--primary)/20] flex items-center justify-center gap-2 transition-all active:scale-[0.98] animate-pop"
+              >
+                {loading ? (
+                  <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    Masuk
+                    <ChevronRight className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 pt-6 border-t border-slate-200 text-center text-sm text-slate-500">
+              <p>Gunakan akun karyawan untuk mengakses dashboard.</p>
+              <p className="mt-3 text-slate-400">Contoh: admin@embege.com / admin123</p>
+            </div>
           </div>
         </div>
-
-        {/* Decorative elements */}
-        <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-[100px] animate-pulse" />
       </div>
     </div>
   );
