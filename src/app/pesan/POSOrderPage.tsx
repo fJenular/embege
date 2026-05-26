@@ -339,7 +339,7 @@ export default function POSOrderPage() {
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-primary/20 hover:border-primary text-primary hover:bg-primary-soft font-bold text-sm transition-all"
             >
               <LogIn className="w-4 h-4" />
-              Login Karyawan
+              Login
             </button>
           </div>
         </div>

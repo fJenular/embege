@@ -28,19 +28,20 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 bg-white border-r border-slate-200 flex flex-col h-full premium-shadow z-20">
-      <div className="p-8">
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-            <Package className="w-6 h-6" />
+    <aside className="w-64 bg-white border-r border-zinc-200/80 flex flex-col h-full z-20">
+      <div className="p-6">
+        {/* Brand Logo Header */}
+        <div className="flex items-center gap-2 mb-8 px-2 py-1">
+          <div className="h-7 flex items-center">
+            <img src="/logo.svg" alt="EMBEGE Logo" className="h-6 w-auto object-contain" />
           </div>
-          <div>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">EMBEGE</h2>
-            <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Admin Panel</p>
+          <div className="h-3 border-l border-zinc-300 ml-2 pl-2 flex items-center">
+            <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Admin</span>
           </div>
         </div>
 
-        <nav className="space-y-1.5">
+        {/* Navigation Menu */}
+        <nav className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
@@ -48,13 +49,13 @@ export default function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all-custom group ${
+                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 group ${
                   isActive 
-                    ? "sidebar-item-active" 
-                    : "text-slate-400 hover:text-emerald-500 hover:bg-emerald-50"
+                    ? "bg-zinc-950 text-white shadow-sm" 
+                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
                 }`}
               >
-                <Icon className={`w-5 h-5 transition-transform group-hover:scale-110 ${isActive ? "text-white" : "text-slate-400 group-hover:text-emerald-500"}`} />
+                <Icon className={`w-4.5 h-4.5 transition-transform group-hover:scale-105 ${isActive ? "text-[#1591dc]" : "text-zinc-400 group-hover:text-zinc-600"}`} />
                 {item.label}
               </Link>
             );
@@ -62,13 +63,14 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto p-8 bg-white">
+      {/* Sidebar Footer / Logout */}
+      <div className="mt-auto p-6 border-t border-zinc-100">
         <form action={logout}>
           <button 
             type="submit"
-            className="flex items-center gap-3 text-slate-400 hover:text-rose-500 font-bold text-sm transition-colors group"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-100 font-semibold text-xs transition-all duration-200 group cursor-pointer"
           >
-            <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             Logout
           </button>
         </form>
