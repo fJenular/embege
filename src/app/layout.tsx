@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "EMBEGE - Eat More. Be Good Everyday",
   description: "Platform pemesanan katering - Good food. Good mood",
+  icons: {
+    icon: "/hero.png",
+  },
 };
 
 export default function RootLayout({

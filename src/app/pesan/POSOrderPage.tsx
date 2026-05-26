@@ -2,10 +2,37 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  ShoppingCart, Search, Minus, Plus, Trash2, CreditCard, LogIn, 
-  MapPin, Phone, User, Clock, CheckCircle2, QrCode, Coins, Landmark,
-  HelpCircle, PhoneCall, Filter, Sparkles, X, ChevronRight, Menu
+import {
+  ShoppingCart,
+  Search,
+  Minus,
+  Plus,
+  Trash2,
+  CreditCard,
+  LogIn,
+  MapPin,
+  Phone,
+  User,
+  Clock,
+  CheckCircle2,
+  QrCode,
+  Coins,
+  Landmark,
+  PhoneCall,
+  X,
+  ChevronRight,
+  Menu,
+  Layers,
+  Sunrise,
+  Sun,
+  Moon,
+  Gift,
+  Coffee,
+  PartyPopper,
+  ForkKnife,
+  Truck,
+  ShoppingBag,
+  type LucideIcon,
 } from 'lucide-react';
 
 type Paket = {
@@ -27,12 +54,12 @@ type CartItem = {
   foto1?: string;
 };
 
-const CATEGORIES = [
-  { id: 'all', label: 'Semua Menu', emoji: '🍽️' },
-  { id: 'sarapan', label: 'Sarapan', emoji: '🌅' },
-  { id: 'makan_siang', label: 'Makan Siang', emoji: '☀️' },
-  { id: 'makan_malam', label: 'Makan Malam', emoji: '🌙' },
-  { id: 'paket_acara', label: 'Paket Acara', emoji: '🎉' },
+const CATEGORIES: Array<{ id: string; label: string; icon: LucideIcon }> = [
+  { id: 'all', label: 'Semua Menu', icon: Menu },
+  { id: 'sarapan', label: 'Sarapan', icon: Coffee },
+  { id: 'makan_siang', label: 'Makan Siang', icon: Sun },
+  { id: 'makan_malam', label: 'Makan Malam', icon: Moon },
+  { id: 'paket_acara', label: 'Paket Acara', icon: PartyPopper },
 ];
 
 const CATEGORY_MAP: Record<string, string[]> = {
@@ -270,17 +297,11 @@ export default function POSOrderPage() {
       <aside className="hidden lg:flex w-72 bg-white border-r border-[#e2e8f0] flex-col p-6 shrink-0 z-30 h-screen">
         <div className="flex flex-col h-full">
           <div>
-            <div className="flex items-center gap-3.5 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-blue-500/20">E</div>
+            <div className="flex flex-col items-center gap-4 mb-6 text-center">
+              <img src="/logo.svg" alt="EMBEGE" className="w-50" />
               <div>
-                <h1 className="text-xl font-black tracking-tight text-[#0f172a]">EMBEGE</h1>
-                <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider mt-0.5">Eat More. Be Good.</p>
+                <p className="mt-1 text-sm font-black text-slate-900">Emang Beda Gizi & Enaknya</p>
               </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-primary-soft/50 border border-primary/10 mb-4">
-              <p className="text-xs font-bold text-primary italic">"Good food. Good mood."</p>
-              <p className="text-[10px] text-muted-foreground mt-1">EMBEGE POS & Order System</p>
             </div>
 
             <nav className="space-y-2">
@@ -289,21 +310,21 @@ export default function POSOrderPage() {
                 onClick={() => setActiveSection('pesan')}
                 className={`w-full flex items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-bold transition-all ${activeSection === 'pesan' ? 'sidebar-item-active text-white' : 'text-muted-foreground hover:text-[#0f172a] hover:bg-slate-50'}`}
               >
-                <span className="text-base">🍽️</span>
+                <ForkKnife className="w-4.5 h-4.5" />
                 Pesan Menu
               </button>
               <button
                 onClick={() => setActiveSection('riwayat')}
                 className={`w-full flex items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-bold transition-all ${activeSection === 'riwayat' ? 'sidebar-item-active text-white' : 'text-muted-foreground hover:text-[#0f172a] hover:bg-slate-50'}`}
               >
-                <span className="text-base">🕒</span>
+                <Clock className="w-4.5 h-4.5" />
                 Riwayat Katering
               </button>
               <button
                 onClick={() => setActiveSection('help')}
                 className={`w-full flex items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-bold transition-all ${activeSection === 'help' ? 'sidebar-item-active text-white' : 'text-muted-foreground hover:text-[#0f172a] hover:bg-slate-50'}`}
               >
-                <span className="text-base">📞</span>
+                <PhoneCall className="w-4.5 h-4.5" />
                 Hubungi CS
               </button>
             </nav>
@@ -325,7 +346,7 @@ export default function POSOrderPage() {
       </aside>
 
       {/* MAIN CONTAINER */}
-      <main className="flex-1 flex flex-col overflow-auto min-w-0 pb-[360px] lg:pb-0">
+      <main className="flex-1 flex flex-col min-w-0 h-screen pb-[360px] lg:pb-0">
         {/* Top Header */}
         <header className="bg-white border-b border-[#e2e8f0] px-6 py-4.5 flex flex-col md:flex-row items-center justify-between gap-4 z-20">
           <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -385,34 +406,33 @@ export default function POSOrderPage() {
           <div className="fixed inset-0 z-40 lg:hidden bg-slate-900/50 backdrop-blur-sm">
             <div className="absolute left-0 top-0 h-full w-72 bg-white p-6 shadow-2xl overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-bold">Menu Navigasi</p>
-                  <h3 className="text-lg font-black text-slate-900">EMBEGE</h3>
-                </div>
-                <button onClick={() => setMobileMenuOpen(false)} className="rounded-2xl border border-slate-200 p-3 text-slate-600 hover:bg-slate-100 transition-all">
-                  <X className="w-4 h-4" />
-                </button>
+              <div className="flex items-center gap-3">
+                <img src="/logo.svg" alt="EMBEGE" className="w-40" />
               </div>
+              <button onClick={() => setMobileMenuOpen(false)} className="rounded-2xl border border-slate-200 p-3 text-slate-600 hover:bg-slate-100 transition-all">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
               <nav className="space-y-3">
                 <button
                   onClick={() => { setActiveSection('pesan'); setMobileMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all ${activeSection === 'pesan' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-50'}`}
                 >
-                  <span>🍽️</span>
+                  <ForkKnife className="w-4.5 h-4.5" />
                   Pesan Menu
                 </button>
                 <button
                   onClick={() => { setActiveSection('riwayat'); setMobileMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all ${activeSection === 'riwayat' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-50'}`}
                 >
-                  <span>🕒</span>
+                  <Clock className="w-4.5 h-4.5" />
                   Riwayat Katering
                 </button>
                 <button
                   onClick={() => { setActiveSection('help'); setMobileMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all ${activeSection === 'help' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-50'}`}
                 >
-                  <span>📞</span>
+                  <PhoneCall className="w-4.5 h-4.5" />
                   Hubungi CS
                 </button>
               </nav>
@@ -420,9 +440,10 @@ export default function POSOrderPage() {
           </div>
         )}
 
-        {activeSection === 'pesan' && (
-          <>
-            <div className="bg-white border-b border-[#e2e8f0] px-6 py-4 overflow-x-auto scrollbar-none">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {activeSection === 'pesan' && (
+            <>
+            <div className="flex-shrink-0 bg-white border-b border-[#e2e8f0] px-6 py-4 overflow-x-auto scrollbar-none">
               <div className="flex gap-4">
                 {CATEGORIES.map((cat) => {
                   const isActive = selectedCategory === cat.id;
@@ -437,7 +458,7 @@ export default function POSOrderPage() {
                           : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50/50'
                       }`}
                     >
-                      <span className="text-2xl mb-2">{cat.emoji}</span>
+                      <cat.icon className="w-6 h-6 mb-2 text-primary" />
                       <span className="font-bold text-sm text-[#0f172a]">{cat.label}</span>
                       <span className="text-[10px] text-muted-foreground font-semibold mt-0.5">{count} menu</span>
                     </button>
@@ -446,7 +467,7 @@ export default function POSOrderPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto scrollbar-none p-6">
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                   <div className="w-10 h-10 border-3 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
@@ -673,7 +694,8 @@ export default function POSOrderPage() {
               </div>
             </div>
           </div>
-        )}
+          )}
+        </div>
       </main>
 
       {!cartOpen && cart.length > 0 && (
@@ -697,7 +719,7 @@ export default function POSOrderPage() {
 
       {/* RIGHT SIDEBAR (CART & CHECKOUT FORM) */}
       {cartOpen && (
-        <aside className="fixed bottom-0 left-0 right-0 lg:static lg:w-[420px] bg-white border-t border-[#e2e8f0] lg:border-l flex flex-col shrink-0 z-50 max-h-[90vh] lg:h-auto shadow-xl lg:shadow-none animate-slide-up lg:relative lg:max-h-full">
+        <aside className="fixed bottom-0 left-0 right-0 lg:static lg:w-[420px] bg-white border-t border-[#e2e8f0] lg:border-l flex flex-col shrink-0 z-50 max-h-[90vh] lg:h-auto shadow-xl lg:shadow-none cart-drawer lg:relative lg:max-h-full">
           
           {/* Header */}
           <div className="p-6 border-b border-[#e2e8f0] flex items-center justify-between gap-4">
@@ -799,24 +821,24 @@ export default function POSOrderPage() {
                 <button
                   type="button"
                   onClick={() => setOrderType('delivery')}
-                  className={`py-2 rounded-lg font-bold text-xs transition-all ${
+                  className={`flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-xs transition-all ${
                     orderType === 'delivery'
                       ? 'bg-white shadow-sm text-primary border border-slate-100'
                       : 'text-muted-foreground hover:text-slate-850'
                   }`}
                 >
-                  🚚 Kirim Ke Alamat
+                  <Truck className="w-4 h-4" /> Kirim ke Alamat
                 </button>
                 <button
                   type="button"
                   onClick={() => setOrderType('takeaway')}
-                  className={`py-2 rounded-lg font-bold text-xs transition-all ${
+                  className={`flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-xs transition-all ${
                     orderType === 'takeaway'
                       ? 'bg-white shadow-sm text-primary border border-slate-100'
                       : 'text-muted-foreground hover:text-slate-850'
                   }`}
                 >
-                  🥡 Ambil Sendiri
+                  <ShoppingBag className="w-4 h-4" /> Ambil Sendiri
                 </button>
               </div>
 
