@@ -90,6 +90,31 @@ export default function POSOrderPage() {
   const [paymentMethodId, setPaymentMethodId] = useState('3'); // Default QRIS (ID 3)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Payment verification states
+  const [paymentStatus, setPaymentStatus] = useState<'unpaid' | 'verifying' | 'paid'>('unpaid');
+  const [transferType, setTransferType] = useState<'ewallet' | 'bank' | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<string>('');
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  const handlePaymentMethodChange = (id: string) => {
+    setPaymentMethodId(id);
+    setPaymentStatus(id === '1' ? 'paid' : 'unpaid'); // Cash/Tunai does not require verification flow
+    setTransferType(null);
+    setSelectedProvider('');
+  };
+
+  const simulatePaymentVerification = () => {
+    setPaymentStatus('verifying');
+    setTimeout(() => {
+      setPaymentStatus('paid');
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        setShowSuccessModal(true);
+      }, 500);
+    }, 1500);
+  };
+
   // Success Modal states
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [lastInvoice, setLastInvoice] = useState<any>(null);
@@ -257,12 +282,19 @@ export default function POSOrderPage() {
       }
       const orderData = await pemesananRes.json();
 
+      const getPaymentMethodName = () => {
+        if (paymentMethodId === '1') return 'Cash / Tunai';
+        if (paymentMethodId === '2') return `Transfer Bank (${selectedProvider || 'Bank'})`;
+        if (paymentMethodId === '3') return 'QRIS';
+        return 'Lainnya';
+      };
+
       const invoice = {
         no_resi: orderData.no_resi,
         nama_pelanggan: customerName,
         telepon: customerPhone,
         alamat: address,
-        paymentMethodName: paymentMethodId === '1' ? 'Cash / Tunai' : paymentMethodId === '2' ? 'Transfer Bank' : 'QRIS',
+        paymentMethodName: getPaymentMethodName(),
         items: [...cart],
         total: total,
         status: 'Selesai',
@@ -275,13 +307,20 @@ export default function POSOrderPage() {
         saveOrderHistory(next);
         return next;
       });
-      setShowSuccessModal(true);
 
       // Clear states
       setCart([]);
       setCustomerName('');
       setCustomerPhone('');
       setDeliveryAddress('');
+      setPaymentStatus('unpaid');
+      
+      if (paymentMethodId === '1') {
+        setShowSuccessModal(true);
+      } else {
+        setCartOpen(false);
+        setShowPaymentModal(true);
+      }
     } catch (error: any) {
       console.error(error);
       alert(error.message || 'Terjadi kesalahan saat memproses pesanan.');
@@ -898,7 +937,7 @@ export default function POSOrderPage() {
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setPaymentMethodId('3')}
+                    onClick={() => handlePaymentMethodChange('3')}
                     className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all ${
                       paymentMethodId === '3'
                         ? 'border-primary bg-primary-soft text-primary shadow-sm'
@@ -910,7 +949,7 @@ export default function POSOrderPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPaymentMethodId('2')}
+                    onClick={() => handlePaymentMethodChange('2')}
                     className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all ${
                       paymentMethodId === '2'
                         ? 'border-primary bg-primary-soft text-primary shadow-sm'
@@ -922,7 +961,7 @@ export default function POSOrderPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPaymentMethodId('1')}
+                    onClick={() => handlePaymentMethodChange('1')}
                     className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all ${
                       paymentMethodId === '1'
                         ? 'border-primary bg-primary-soft text-primary shadow-sm'
@@ -933,6 +972,7 @@ export default function POSOrderPage() {
                     <span className="text-[9px] font-black uppercase">Tunai</span>
                   </button>
                 </div>
+
               </div>
             </form>
           )}
@@ -975,6 +1015,106 @@ export default function POSOrderPage() {
           </button>
         </div>
       </aside>
+      )}
+
+      {/* PAYMENT MODAL */}
+      {showPaymentModal && lastInvoice && (
+        <div className="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl relative overflow-hidden border border-slate-100 animate-pop">
+            <button 
+              onClick={() => { setShowPaymentModal(false); setShowSuccessModal(true); }}
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">Selesaikan Pembayaran</h3>
+              <p className="text-xs text-muted-foreground mt-1">Selesaikan pembayaran untuk memproses pesanan Anda.</p>
+            </div>
+
+            {/* QRIS Panel */}
+            {paymentMethodId === '3' && (
+              <div className="space-y-4">
+                <div className="flex justify-center p-4 bg-white border border-slate-100 rounded-xl shadow-inner">
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=Pembayaran+Catering+EMBEGE+${lastInvoice.no_resi}`} alt="QRIS" className="w-48 h-48" />
+                </div>
+                <div className="text-center text-sm font-bold text-slate-700">Total: Rp {lastInvoice.total.toLocaleString('id-ID')}</div>
+              </div>
+            )}
+
+            {/* Transfer Panel */}
+            {paymentMethodId === '2' && (
+              <div className="space-y-4 text-left">
+                <span className="text-xs font-bold text-slate-700 block mb-1">Pilih Opsi Transfer</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button onClick={() => { setTransferType('ewallet'); setSelectedProvider(''); setPaymentStatus('unpaid'); }} className={`py-2 rounded-xl border font-bold text-xs transition-all ${transferType === 'ewallet' ? 'border-primary bg-primary-soft text-primary' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}>E-Wallet</button>
+                  <button onClick={() => { setTransferType('bank'); setSelectedProvider(''); setPaymentStatus('unpaid'); }} className={`py-2 rounded-xl border font-bold text-xs transition-all ${transferType === 'bank' ? 'border-primary bg-primary-soft text-primary' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'}`}>Transfer Bank</button>
+                </div>
+
+                {transferType === 'ewallet' && (
+                  <div className="grid grid-cols-3 gap-1.5 pt-1">
+                    {[{name: 'GoPay', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/1200px-Gopay_logo.svg.png'}, {name: 'ShopeePay', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/shopeepay-logo-icon.svg'}, {name: 'Dana', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/dana-logo-icon.svg'}].map((p) => (
+                      <button key={p.name} onClick={() => { setSelectedProvider(p.name); setPaymentStatus('unpaid'); }} className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all ${selectedProvider === p.name ? 'border-primary bg-primary-soft' : 'border-slate-200 bg-white hover:bg-slate-50'}`}>
+                        <img src={p.logo} alt={p.name} className="h-6 w-auto object-contain mb-1" />
+                        <span className="text-[9px] font-bold text-slate-600 mt-1">{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {transferType === 'bank' && (
+                  <div className="grid grid-cols-4 gap-1.5 pt-1">
+                    {[{name: 'BCA', logo: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/bca-bank-central-asia-logo-icon.svg'}, {name: 'BSI', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Bank_Syariah_Indonesia.svg/120px-Bank_Syariah_Indonesia.svg.png'}, {name: 'BRI', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_2020.svg/120px-BRI_2020.svg.png'}, {name: 'Mandiri', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/120px-Bank_Mandiri_logo_2016.svg.png'}].map((p) => (
+                      <button key={p.name} onClick={() => { setSelectedProvider(p.name); setPaymentStatus('unpaid'); }} className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all ${selectedProvider === p.name ? 'border-primary bg-primary-soft' : 'border-slate-200 bg-white hover:bg-slate-50'}`}>
+                        <img src={p.logo} alt={p.name} className="h-4 w-auto object-contain mb-1" />
+                        <span className="text-[9px] font-bold text-slate-600 mt-1">{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {selectedProvider && (
+                  <div className="bg-white p-3 border border-slate-100 rounded-xl space-y-2 mt-2">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 font-semibold">Tujuan Transfer</span>
+                      <span className="font-bold text-slate-700">{selectedProvider}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 font-semibold">Nama Rekening</span>
+                      <span className="font-bold text-slate-700">CV EMBEGE CATERING</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 font-semibold">Jumlah</span>
+                      <span className="font-bold text-emerald-600 text-sm">Rp {lastInvoice.total.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div className="flex items-center justify-between bg-slate-50 p-2 rounded-lg">
+                      <span className="font-mono text-xs font-black text-slate-800">{transferType === 'ewallet' ? '0812-3456-7890' : '8012345678'}</span>
+                      <button onClick={() => navigator.clipboard.writeText('081234567890')} className="text-[10px] font-black text-primary">Salin</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="mt-6">
+              {paymentStatus === 'unpaid' && (
+                <button onClick={simulatePaymentVerification} className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl shadow hover:bg-primary-hover transition-all">
+                  Konfirmasi Pembayaran
+                </button>
+              )}
+              {paymentStatus === 'verifying' && (
+                <div className="w-full py-3 bg-blue-50 text-primary text-sm font-bold rounded-xl flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" /> Memverifikasi...
+                </div>
+              )}
+              {paymentStatus === 'paid' && (
+                <div className="w-full py-3 bg-emerald-50 text-emerald-600 text-sm font-bold rounded-xl flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" /> Terverifikasi!
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* SUCCESS CONFIRMATION MODAL */}

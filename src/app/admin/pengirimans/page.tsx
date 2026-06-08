@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Truck, Plus, Edit, ArrowUpRight } from "lucide-react";
+import { Truck, Plus, Edit, ArrowUpRight, Image as ImageIcon } from "lucide-react";
 import DeletePengirimButton from "./DeleteButton";
 import PengirimStatusSelect from "./StatusSelect";
 
@@ -62,7 +62,14 @@ export default async function PengirimansPage() {
                   </td>
                   <td className="px-6 py-5 text-zinc-600 font-medium">{pg.users?.name || "-"}</td>
                   <td className="px-6 py-5 text-zinc-500">{pg.tgl_kirim ? new Date(pg.tgl_kirim).toLocaleDateString("id-ID") : "-"}</td>
-                  <td className="px-6 py-5 text-zinc-500">{pg.tgl_tiba ? new Date(pg.tgl_tiba).toLocaleDateString("id-ID") : "-"}</td>
+                  <td className="px-6 py-5">
+                    <div className="text-zinc-500">{pg.tgl_tiba ? new Date(pg.tgl_tiba).toLocaleDateString("id-ID") : "-"}</div>
+                    {pg.bukti_foto && (
+                      <a href={pg.bukti_foto} target="_blank" rel="noopener noreferrer" className="mt-1 flex items-center gap-1 text-[10px] font-bold text-blue-500 hover:underline">
+                        <ImageIcon className="w-3 h-3" /> BUKTI FOTO
+                      </a>
+                    )}
+                  </td>
                   <td className="px-6 py-5">
                     <PengirimStatusSelect id={pg.id.toString()} current={pg.status_kirim || ""} />
                   </td>

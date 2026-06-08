@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Package, User, CreditCard, Clock, MapPin, Truck, CheckCircle } from "lucide-react";
+import CourierDeliveryForm from "./CourierDeliveryForm";
+import Image from "next/image";
 
 export default async function KurirOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -95,6 +97,19 @@ export default async function KurirOrderDetailPage({ params }: { params: Promise
                 <div><span className="text-slate-400 font-semibold">Kurir:</span> <span className="text-blue-950 font-bold">{pg.users?.name || "-"}</span></div>
                 <div><span className="text-slate-400 font-semibold">Tanggal Kirim:</span> <span>{pg.tgl_kirim ? new Date(pg.tgl_kirim).toLocaleDateString("id-ID") : "-"}</span></div>
                 {pg.tgl_tiba && <div><span className="text-slate-400 font-semibold">Tanggal Tiba:</span> <span>{new Date(pg.tgl_tiba).toLocaleDateString("id-ID")}</span></div>}
+                
+                {pg.bukti_foto && (
+                  <div className="mt-4">
+                    <span className="text-slate-400 font-semibold block mb-2">Bukti Pengiriman:</span>
+                    <div className="relative w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-slate-100">
+                      <Image src={pg.bukti_foto} alt="Bukti Foto" fill className="object-cover" />
+                    </div>
+                  </div>
+                )}
+
+                {!isDelivered && (
+                  <CourierDeliveryForm pengirimanId={pg.id.toString()} pemesananId={id} />
+                )}
               </div>
             );
           })}
