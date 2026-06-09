@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import CustomerWelcome from '@/components/CustomerWelcome';
 import {
   ShoppingCart,
   Search,
@@ -361,7 +362,9 @@ export default function POSOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] font-sans antialiased flex flex-col lg:flex-row">
+    <>
+      <CustomerWelcome />
+      <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] font-sans antialiased flex flex-col lg:flex-row">
       
       {/* LEFT SIDEBAR */}
       <aside className="hidden lg:flex w-72 bg-white border-r border-[#e2e8f0] flex-col p-6 shrink-0 z-30 h-screen">
@@ -1275,5 +1278,6 @@ export default function POSOrderPage() {
       )}
 
     </div>
+    </>
   );
 }
