@@ -70,6 +70,7 @@ model pemesanans {
   tgl_pesan         DateTime?                @db.DateTime(0)
   status_pesan      pemesanans_status_pesan?
   total_bayar       BigInt?
+  bukti_bayar       String?                  @db.VarChar(255)
   created_at        DateTime?                @db.Timestamp(0)
   updated_at        DateTime?                @db.Timestamp(0)
   detail_pemesanans detail_pemesanans[]
@@ -137,4 +138,5 @@ enum pemesanans_status_pesan {
   Menunggu_Konfirmasi @map("Menunggu Konfirmasi")
   Sedang_Diproses     @map("Sedang Diproses")
   Menunggu_Kurir      @map("Menunggu Kurir")
+  Selesai             @map("Selesai")
 }

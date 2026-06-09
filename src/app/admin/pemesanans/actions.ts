@@ -17,8 +17,10 @@ export async function updateStatusPemesanan(id: string, status: string) {
 }
 
 export async function deletePemesanan(id: string) {
-  // Delete related detail_pemesanans first
+  // Delete related records first to avoid foreign key constraints
+  await prisma.pengirimans.deleteMany({ where: { id_pesan: BigInt(id) } });
   await prisma.detail_pemesanans.deleteMany({ where: { id_pemesanan: BigInt(id) } });
+  
   await prisma.pemesanans.delete({ where: { id: BigInt(id) } });
   revalidatePath("/admin/pemesanans");
 }

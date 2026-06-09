@@ -37,7 +37,7 @@ export default function CourierDeliveryForm({ pengirimanId, pemesananId }: { pen
       if (!res.ok) throw new Error("Upload failed");
 
       const data = await res.json();
-      await submitDeliveryProof(pengirimanId, data.url);
+      await submitDeliveryProof(pengirimanId, data.filePath);
       router.refresh();
     } catch (error) {
       console.error(error);

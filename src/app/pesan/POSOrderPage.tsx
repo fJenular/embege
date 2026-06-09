@@ -94,25 +94,59 @@ export default function POSOrderPage() {
   const [paymentStatus, setPaymentStatus] = useState<'unpaid' | 'verifying' | 'paid'>('unpaid');
   const [transferType, setTransferType] = useState<'ewallet' | 'bank' | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<string>('');
+  const [paymentFile, setPaymentFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const handlePaymentMethodChange = (id: string) => {
     setPaymentMethodId(id);
-    setPaymentStatus(id === '1' ? 'paid' : 'unpaid'); // Cash/Tunai does not require verification flow
+    setPaymentStatus('unpaid'); // Tunai now requires verification flow (photo)
     setTransferType(null);
     setSelectedProvider('');
   };
 
-  const simulatePaymentVerification = () => {
+  const confirmPaymentVerification = async () => {
+    if (!paymentFile) {
+      alert("Mohon upload foto bukti pembayaran/penyerahan uang terlebih dahulu.");
+      return;
+    }
+
     setPaymentStatus('verifying');
-    setTimeout(() => {
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', paymentFile);
+      const uploadRes = await fetch('/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadRes.ok) throw new Error('Gagal upload bukti pembayaran');
+      const uploadData = await uploadRes.json();
+      const fileUrl = uploadData.filePath;
+
+      const updateRes = await fetch(`/api/pemesanans/${lastInvoice.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bukti_bayar: fileUrl }),
+      });
+
+      if (!updateRes.ok) throw new Error('Gagal update pesanan');
+
       setPaymentStatus('paid');
       setTimeout(() => {
         setShowPaymentModal(false);
         setShowSuccessModal(true);
       }, 500);
-    }, 1500);
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message || 'Terjadi kesalahan saat memverifikasi pembayaran.');
+      setPaymentStatus('unpaid');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Success Modal states
@@ -289,7 +323,8 @@ export default function POSOrderPage() {
         return 'Lainnya';
       };
 
-      const invoice = {
+      const invoice: any = {
+        id: orderData.id,
         no_resi: orderData.no_resi,
         nama_pelanggan: customerName,
         telepon: customerPhone,
@@ -314,13 +349,9 @@ export default function POSOrderPage() {
       setCustomerPhone('');
       setDeliveryAddress('');
       setPaymentStatus('unpaid');
-      
-      if (paymentMethodId === '1') {
-        setShowSuccessModal(true);
-      } else {
-        setCartOpen(false);
-        setShowPaymentModal(true);
-      }
+      setPaymentFile(null);
+      setCartOpen(false);
+      setShowPaymentModal(true);
     } catch (error: any) {
       console.error(error);
       alert(error.message || 'Terjadi kesalahan saat memproses pesanan.');
@@ -1022,7 +1053,23 @@ export default function POSOrderPage() {
         <div className="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl relative overflow-hidden border border-slate-100 animate-pop">
             <button 
-              onClick={() => { setShowPaymentModal(false); setShowSuccessModal(true); }}
+              onClick={async () => { 
+                if (window.confirm("Apakah yakin membatalkan pesanan?")) {
+                  try {
+                    await fetch(`/api/pemesanans/${lastInvoice.id}`, { method: 'DELETE' });
+                    setOrderHistory(prev => {
+                      const next = prev.filter(o => o.id !== lastInvoice.id);
+                      saveOrderHistory(next);
+                      return next;
+                    });
+                    setShowPaymentModal(false);
+                    setPaymentStatus('unpaid');
+                    setLastInvoice(null);
+                  } catch (e) {
+                    alert("Gagal membatalkan pesanan");
+                  }
+                }
+              }}
               className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"
             >
               <X className="w-5 h-5" />
@@ -1031,6 +1078,18 @@ export default function POSOrderPage() {
               <h3 className="text-xl font-black text-slate-900 tracking-tight">Selesaikan Pembayaran</h3>
               <p className="text-xs text-muted-foreground mt-1">Selesaikan pembayaran untuk memproses pesanan Anda.</p>
             </div>
+
+            {/* Tunai Panel */}
+            {paymentMethodId === '1' && (
+              <div className="space-y-4">
+                <div className="flex justify-center p-4 bg-white border border-slate-100 rounded-xl shadow-inner">
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-slate-700">Pembayaran Tunai</p>
+                    <p className="text-xs text-muted-foreground mt-1">Silakan siapkan uang tunai sebesar<br/><strong className="text-primary text-lg">Rp {lastInvoice.total.toLocaleString('id-ID')}</strong></p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* QRIS Panel */}
             {paymentMethodId === '3' && (
@@ -1096,15 +1155,32 @@ export default function POSOrderPage() {
               </div>
             )}
 
-            <div className="mt-6">
+            {/* Upload Area (For All Payment Options) */}
+            <div className="mt-6 pt-4 border-t border-slate-100">
+              <label className="block text-xs font-bold text-slate-700 mb-2">Upload Bukti Pembayaran / Penyerahan Uang</label>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    setPaymentFile(e.target.files[0]);
+                  }
+                }}
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary-soft file:text-primary hover:file:bg-primary-soft/80 file:cursor-pointer file:transition-all cursor-pointer bg-slate-50 border border-slate-200 rounded-xl mb-4"
+              />
+              
               {paymentStatus === 'unpaid' && (
-                <button onClick={simulatePaymentVerification} className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl shadow hover:bg-primary-hover transition-all">
+                <button 
+                  onClick={confirmPaymentVerification} 
+                  disabled={isUploading || !paymentFile}
+                  className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl shadow hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   Konfirmasi Pembayaran
                 </button>
               )}
               {paymentStatus === 'verifying' && (
                 <div className="w-full py-3 bg-blue-50 text-primary text-sm font-bold rounded-xl flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" /> Memverifikasi...
+                  <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" /> {isUploading ? 'Mengunggah Foto...' : 'Memverifikasi...'}
                 </div>
               )}
               {paymentStatus === 'paid' && (

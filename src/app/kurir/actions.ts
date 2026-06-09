@@ -21,8 +21,10 @@ export async function submitDeliveryProof(pengirimanId: string, photoPath: strin
   });
   
   if (pengiriman?.id_pesan) {
-    // Check if all deliveries for this order are completed? For simplicity let's just mark it completed?
-    // Actually pemesanans_status_pesan doesn't have "Selesai" or "Terkirim", let's check schema.
+    await prisma.pemesanans.update({
+      where: { id: pengiriman.id_pesan },
+      data: { status_pesan: "Selesai" }
+    });
   }
 
   revalidatePath("/kurir/orders");
